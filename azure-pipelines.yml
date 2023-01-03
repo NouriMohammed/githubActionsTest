@@ -1,0 +1,36 @@
+trigger:
+- master
+
+
+variables:
+  dockerRegistryServiceConnection: 'connexionVersLeRegistry'
+  imageRepository: 'xx'
+  containerRegistry: 'urlOfTheRegistryDocker'
+  dockerfilePath : '**/Dockerfile'
+  imagePullSecret: 'connexion qui contient le scret'
+
+  vmImageName: 'ubuntu-18.04'
+
+stages:
+
+- stage: build
+  displayName: building the project
+  jobs:
+  - job: build
+    displayName: build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: build the project in docker container
+      inputs:
+        Dockerfile: $(dockerfilePath)
+        command: build
+        tags: sym:test
+    - task: Docker@2
+      displayName: run the project in docker container
+      inputs:
+        command: run
+        arguments: -it -d --name symfonycontainer sym:test
+    - script: |
+        docker exec symfonycontainer ./bin/phpunit

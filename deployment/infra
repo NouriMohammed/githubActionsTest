@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: infra-manager
+  namespace: ingress-nginx
+spec:
+  selector:
+    matchLabels:
+      app: infra-manager
+  template:
+    metadata:
+      labels:
+       app: infra-manager
+    spec:
+      containers:
+        - name: infra-manager
+          image: 
+          resources:
+            limits:
+              cpu: "300m"
+            requests:
+              cpu: "250m"
+#          volumeMounts:
+#          - name: vol
+#            mountPath: /var/www/sites-internes/infra-manager/var/cache/dev/sessions/
+#      volumes:
+#      - name: vol
+#        persistentVolumeClaim:
+#          claimName: pvcc
+      imagePullSecrets:
+        - name: regsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: infra-manager-service
+  namespace: ingress-nginx
+spec:
+  type: NodePort
+  ports:
+    - nodePort: 30082
+      port: 80
+      targetPort: 80
+  selector:
+    app: infra-manager
+

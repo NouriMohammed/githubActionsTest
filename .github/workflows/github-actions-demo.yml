@@ -15,10 +15,12 @@ jobs:
       - run: echo "container runned"
       - run: docker exec symfonycontainer ./bin/phpunit
       - run: echo "unit test executed perfectly"
-      
+
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: cloning the symfony project
+        uses: actions/checkout@v3
       - run: docker build -t symfony .
       - name: List files in the repository
         run: |

@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:8.2-apache
 
 RUN mkdir -p /var/www/html/symfony-ci-test-app
 COPY . /var/www/html/symfony-ci-test-app
@@ -7,7 +7,7 @@ RUN cp symfony-apache.conf /etc/apache2/sites-available/
 RUN apt-get -y update
 
 #installer les pré-requis pour symfony
-RUN apt-get install -y libzip-dev zip && docker-php-ext-configure zip --with-libzip && docker-php-ext-install zip
+RUN apt-get install -y libzip-dev zip && docker-php-ext-install zip
 RUN apt-get install -y libicu-dev && docker-php-ext-configure intl && docker-php-ext-install -j$(nproc) intl
 RUN sed -i 's/;extension=sqlite3/extension=sqlite3/g' /usr/local/etc/php/php.ini-development
 RUN sed -i 's/;extension=intl/extension=intl/g' /usr/local/etc/php/php.ini-development
@@ -29,5 +29,7 @@ RUN a2ensite symfony-apache.conf
 RUN a2enmod rewrite
 
 #installer dependances
-#RUN php -d memory_limit=-1 /usr/local/bin/composer require symfony/apache-pack
-#RUN php -d memory_limit=-1 /usr/local/bin/composer install
+#RUN /usr/local/bin/composer require symfony/flex
+RUN php -d memory_limit=-1 /usr/local/bin/composer install
+#RUN php /usr/local/bin/composer require symfony/apache-pack
+

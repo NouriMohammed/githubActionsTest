@@ -1,0 +1,37 @@
+image: docker:latest
+services:
+ - docker:dind
+
+stages:
+   - unittest
+   - deploy
+   - delivery
+
+unit_test:
+ stage: unittest
+ script:
+  - docker build -t sym:test .
+  - docker run -it -d --name symfonycontainer sym:test
+  - docker exec symfonycontainer ./bin/phpunit
+
+deploy:
+ stage: deploy
+ script:
+  - docker build -t symfony .
+  - docker run -it -d --name symfonycontainer symfony
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+  - docker images 
+  - docker tag symfony:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+  - echo "$CI_COMMIT_SHA"
+
+delivery:
+ stage: delivery
+ before_script:
+  - apk update 
+  - apk add openssh-client
+  - apk add sshpass
+ script:
+  - "sed -i 's|         image:|         image: '$CI_REGISTRY_IMAGE':'$CI_COMMIT_SHA'|g' deployment/infra"
+  - sshpass -p $PASS scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no deployment/infra $USERNAME@$MASTERNODE:/home/$USERNAME/infra
+  - sshpass -p $PASS ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no $USERNAME@$MASTERNODE "kubectl apply -f /home/$USERNAME/infra"

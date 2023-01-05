@@ -46,8 +46,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       
-      
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
+
+      - name: display builded images
+        run: docker images 
       - run: echo "🍏 This job's status is ${{ job.status }}."

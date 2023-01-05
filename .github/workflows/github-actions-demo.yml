@@ -20,6 +20,7 @@ jobs:
       - run: echo "unit test executed perfectly"
 
   deploy:
+    needs: Unit-test
     runs-on: ubuntu-latest
     steps:
       - name: cloning the symfony project
@@ -40,13 +41,14 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      - run: echo ${{ steps.meta.outputs.tags }} && echo ${{ steps.meta.outputs.tags }}
         with:
           context: .
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       
 
       - name: display builded images
         run: docker images 
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+

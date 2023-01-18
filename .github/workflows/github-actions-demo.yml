@@ -43,10 +43,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-      
+          push: true
+          tags: nourimohammed/githubactionstest:$${{ GITHUB_SHA }}
 
       - name: display builded images
         run: docker images 

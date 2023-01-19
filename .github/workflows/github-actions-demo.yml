@@ -19,7 +19,7 @@ jobs:
       - run: docker exec symfonycontainer ./bin/phpunit
       - run: echo "unit test executed perfectly"
 
-  deploy:
+  push_container:
     needs: Unit-test
     runs-on: ubuntu-latest
     steps:
@@ -49,3 +49,17 @@ jobs:
       - name: display builded images
         run: docker images 
 
+  deploy_in_Azure_webapp:
+    needs: push_container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure authentication
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ vars.USER_SPN }}","clientSecret":"${{ secrets.AZURE_WEBAPP_SPN }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ vars.TENANT_ID_SPN }}"}'
+      
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: webapp-actions
+          images: 'ghcr.io/nourimohammed/githubactionstest:${{ github.sha }}'

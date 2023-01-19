@@ -56,7 +56,7 @@ jobs:
       - name: Azure authentication
         uses: azure/login@v1
         with:
-          creds: '{"clientId":"${{ vars.USER_SPN }}","clientSecret":"${{ secrets.AZURE_WEBAPP_SPN }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ vars.TENANT_ID_SPN }}"}'
+          creds: '{"clientId":"${{ secrets.USER_SPN }}","clientSecret":"${{ secrets.AZURE_WEBAPP_SPN }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.TENANT_ID_SPN }}"}'
       
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2

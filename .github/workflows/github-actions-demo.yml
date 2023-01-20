@@ -61,5 +61,5 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: webapp-actions
+          app-name: 'webapp-actions'
           images: 'ghcr.io/nourimohammed/githubactionstest:${{ github.sha }}'

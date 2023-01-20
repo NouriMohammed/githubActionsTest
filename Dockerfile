@@ -32,4 +32,6 @@ RUN a2enmod rewrite
 #RUN /usr/local/bin/composer require symfony/flex
 RUN php -d memory_limit=-1 /usr/local/bin/composer install
 #RUN php /usr/local/bin/composer require symfony/apache-pack
+RUN chown -R :www-data /var/www/html/symfony-ci-test-app
+RUN chmod -R 775 /var/www/html/symfony-ci-test-app
 
